@@ -25,8 +25,5 @@ SafeWheel is licensed under the [MIT License](link-to-license). Feel free to use
 
 ## Contact
 
-For any inquiries or support, please contact our team at [email@example.com].
+For any inquiries or support, please contact our team at [noamcatom6@gmail.com].
 
----
-
-Make sure to replace the placeholder text with actual links, contact information, and appropriate details related to your project.
