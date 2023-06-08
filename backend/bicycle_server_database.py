@@ -5,8 +5,15 @@ import qrcode
 from io import BytesIO
 import re
 from flask import Flask, request, jsonify, send_file
+from flask_cors import CORS
+import os
+from werkzeug.utils import secure_filename
 
-app = Flask(__name__)
+
+app = Flask(__name__, static_folder= "img_static")
+app.config['UPLOAD_FOLDER'] = 'img_static'
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+CORS(app)
 database_bicycle = 'bicycle.db'
 database_user_password = 'users_pass_email.db'
 
@@ -217,70 +224,6 @@ def get_data_about_user():
         return jsonify({'message': "invalid"}), 400
 
 
-def store_image_in_database(image_data):
-    # Establish a connection to the database
-    conn = get_db_connection_for_bicycle()
-    cursor = conn.cursor()
-
-    # Insert the image data into the database
-    cursor.execute("INSERT INTO bicycle (photos) VALUES (?)", (image_data,))
-    conn.commit()
-
-    # Close the database connection
-    conn.close()
-
-def fetch_image_from_database():
-    # Establish a connection to the database
-    conn = sqlite3.connect(database_file)
-    cursor = conn.cursor()
-
-    # Fetch the latest image from the database
-    cursor.execute("SELECT image_data FROM images ORDER BY id DESC LIMIT 1")
-    result = cursor.fetchone()
-
-    # Close the database connection
-    conn.close()
-
-    if result is not None:
-        # Return the image data
-        return result[0]
-    else:
-        return None
-
-@app.route('/upload_image', methods=['POST'])
-def upload_image():
-    image_file = request.files.get('image')
-
-    if image_file:
-        # Read the image data from the file
-        image_data = image_file.read()
-
-        # Store the image in the database
-        store_image_in_database(image_data)
-
-        # Return a success message
-        return jsonify({'message': 'Image uploaded successfully'}), 200
-    else:
-        return jsonify({'message': 'No image file received'}), 400
-
-@app.route('/download_image', methods=['GET'])
-def download_image():
-    # Fetch the latest image from the database
-    image_data = fetch_image_from_database()
-
-    if image_data:
-        # Create a temporary file to store the image data
-        temp_file = 'temp_image.jpg'
-        with open(temp_file, 'wb') as file:
-            file.write(image_data)
-
-        # Send the image file back to the client
-        return send_file(temp_file, mimetype='image/jpeg', as_attachment=True, attachment_filename='image.jpg')
-    else:
-        return jsonify({'message': 'No image found in the database'}), 404
-
-
-
 @app.route('/api/set_stole')
 def set_stolen():
     data = request.json
@@ -338,17 +281,25 @@ def create_vehicle():
     size              = data.get('size')
     stolen            = False
     contact_info      = data.get('contact_info')
-    image_file = request.files.get('image')
-
-    #TODO: GENERATE A QR code 
+    photos_file = request.files.get('image')
+    photos_path = None
+    
     if search_serial_num(serial_num) != None:
         return jsonify({'message': 'serial number exist'}), 400
 
-    #TODO - fix it so it will generate QR code
     #qr_code = set_qr_code(serial_num)
     qr_code = "111"
-    if not photos:
-        photos = sqlite3.Binary('')  # Empty blob value
+
+
+    if not photos_file:
+        photos_path = ""  # Empty blob value
+    else:
+        filename = secure_filename(photos_file.filename)
+        if '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']:
+            photos_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            photos_file.save(photos_path)
+        else:
+            return jsonify({'message': 'Invalid file format'}), 400
 
     # Create a new user
     conn = get_db_connection_for_bicycle()
@@ -362,7 +313,7 @@ def create_vehicle():
                                                  color,\
                                                  stolen,\
                                                  contact_info,\
-                                                 size) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (vehicle_type, serial_num, qr_code, photos, owner, color, stolen, contact_info, size))
+                                                 size) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (vehicle_type, serial_num, qr_code, photos_path, owner, color, stolen, contact_info, size))
                                                  
     conn.commit()
     conn.close()
@@ -373,7 +324,7 @@ def create_vehicle():
 
 
 @app.route('/api/get_vehicle_by_serial_num', methods=['POST']) #change the path
-def get_vehicle_by_serial_num():#TODO:
+def get_vehicle_by_serial_num():
     data = request.json
     num = data.get('serial_num')
     #TODO - check valid user input
@@ -408,6 +359,7 @@ def get_user_vehicles():
 
 
 
+#TODO - add full name and phone to user_pass_email.db
 if __name__ == '__main__':
     conn = get_db_connection_for_bicycle()
 
@@ -418,11 +370,11 @@ if __name__ == '__main__':
                 vehicle_type TEXT NOT NULL, 
                 serial_num INTEGER,
                 qr_code TEXT NOT NULL,
-                photos BLOB NOT NULL, 
+                photos TEXT NOT NULL, 
                 owner TEXT NOT NULL, 
                 color TEXT NOT NULL, 
                 stolen BOOLEAN, 
                 contact_info TEXT NOT NULL,
                 size INTEGER)''')
                 
-    app.run()
+    app.run(debug = True)
