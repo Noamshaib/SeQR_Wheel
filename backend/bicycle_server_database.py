@@ -130,7 +130,7 @@ def get_db_connection_for_user_password():
     return conn
 
 # Example route to create a new user
-@app.route('/api/sign_up', methods=['POST'])
+@app.route('/sign_up', methods=['POST'])
 def create_user():
     #add another database saperated from user - password to the all other data
     #if there is time make the password with hash
@@ -174,7 +174,7 @@ def create_user():
     return jsonify({'message': 'User created successfully'}), 200
 
 # Example route to get all users
-@app.route('/api/login', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login():
     data = request.json
     username = data.get('username')
@@ -209,7 +209,7 @@ def login():
         return jsonify({'message': "Login failed"}), 400
 
 
-@app.route('/api/get_data', methods=['POST'])
+@app.route('/get_data', methods=['POST'])
 def get_data_about_user():
     data = request.json
     username = data.get('username')
@@ -240,14 +240,14 @@ def get_data_about_user():
         return jsonify({'message': "invalid"}), 400
 
 
-@app.route('/api/set_stole')
+@app.route('/set_stole')
 def set_stolen():
     data = request.json
     serial_num = data.get('serial_num')
 
     change_stolen_to_val(True, serial_num)#bicycle are stolen, so set to True
 
-@app.route('/api/set_found')
+@app.route('/set_found')
 def set_found():
     data = request.json
     serial_num = data.get('serial_num')
@@ -285,7 +285,7 @@ def search_serial_num(serial_num):
     return user
 
 # Example route to create a new user
-@app.route('/api/sign_up', methods=['POST'])#TODO: change the url to the relevant one.
+@app.route('/create_vehicle', methods=['POST'])#TODO: change the url to the relevant one.
 def create_vehicle():
     data = request.json
     vehicle_type      = data.get('type')
@@ -339,7 +339,7 @@ def create_vehicle():
 
 
 
-@app.route('/api/get_vehicle_by_serial_num', methods=['POST']) #change the path
+@app.route('/get_vehicle_by_serial_num', methods=['POST']) #change the path
 def get_vehicle_by_serial_num():
     data = request.json
     num = data.get('serial_num')
@@ -358,7 +358,7 @@ def get_vehicle_by_serial_num():
     return jsonify({'message':'The vehicle belongs to no one'}),400
 
 
-@app.route('/api/get_user_vehicles', methods=['POST'])
+@app.route('/get_user_vehicles', methods=['POST'])
 def get_user_vehicles():
     data = request.json
     username = data.get('username')
