@@ -1,4 +1,4 @@
-# SafeWheel
+# SeQR_Wheel
 
 SafeWheel is a mobile application designed to provide top-notch security and peace of mind for your bicycles, scooters, and other two-wheelers. With features like unique QR code generation, vehicle identification marks, stolen vehicle reporting, community support, and location tracking, SafeWheel ensures that your valuable means of transportation are protected against theft and loss. Join SafeWheel and ride with confidence knowing that your two-wheelers are safe and secure.
 
