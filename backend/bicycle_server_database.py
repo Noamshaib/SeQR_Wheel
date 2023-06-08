@@ -117,6 +117,21 @@ def get_vehicle_by_serial_num():#TODO:
         return jsonify({'message': f"The vheicle belongs to someone, but isn't stolen."}), 200
     return jsonify({'message':'The vehicle belongs to no one'}),400
 
+@app.route('/api/get_user_vehicles', methods=['POST'])
+def get_user_vehicles():
+    data = request.json
+    username = data.get('username')
+    conn = get_db_connection_for_bicycle()
+    # Create a cursor object to execute SQL queries
+    cursor = conn.cursor()
+
+    # Execute the SELECT query to retrieve the user by username
+    cursor.execute("SELECT * FROM bicycle WHERE owner = ?", (username,))
+
+    # Fetch the first row (user) from the result set
+    bicycles = cursor.fetchone()
+    return jsonify(bicycles or []), 200
+
 #def set_vehicle_id():
 
 if __name__ == '__main__':
