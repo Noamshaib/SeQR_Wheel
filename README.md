@@ -19,9 +19,6 @@ To get started with SafeWheel, follow the installation instructions and guidelin
 
 Contributions to SafeWheel are welcome! If you have any ideas, bug reports, or feature requests, please open an issue or submit a pull request. Let's make SafeWheel even better together.
 
-## License
-
-SafeWheel is licensed under the [MIT License](link-to-license). Feel free to use, modify, and distribute the code as per the terms of the license.
 
 ## Contact
 
