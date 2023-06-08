@@ -138,6 +138,10 @@ def create_user():
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
+    full_name = data.get('full_name')
+    phone_num = data.get('phone_num')
+    photos_file = request.files.get('image')
+    photos_path = None
 
     if not valid_user_or_password(username, password) or not verify_email_format(email):
         return illegal_input_err()
@@ -146,12 +150,24 @@ def create_user():
     if msg != None:
         return jsonify({'message': msg}), 400
     
+    if not photos_file:
+        photos_path = ""  # Empty path
+    else:
+        filename = secure_filename(photos_file.filename)
+        if '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']:
+            photos_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            photos_file.save(photos_path)
+        else:
+            return jsonify({'message': 'Invalid file format'}), 400
     
     # Create a new user
     conn_user_pass = get_db_connection_for_user_password()
     cursor_user_pass = conn_user_pass.cursor()
     hashed_password = encrypt_password(password)
-    cursor_user_pass.execute("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", (username, hashed_password, email))
+    cursor_user_pass.execute("INSERT INTO users (username, password, \
+                             email, full_name, phone_num,\
+                              path_img_profile) VALUES (?, ?, ?, ?, ?, ?)\
+                             ", (username, hashed_password, email, full_name, phone_num, photos_path))
     conn_user_pass.commit()
     conn_user_pass.close()
 
@@ -292,7 +308,7 @@ def create_vehicle():
 
 
     if not photos_file:
-        photos_path = ""  # Empty blob value
+        photos_path = ""  # Empty path
     else:
         filename = secure_filename(photos_file.filename)
         if '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']:
@@ -376,5 +392,18 @@ if __name__ == '__main__':
                 stolen BOOLEAN, 
                 contact_info TEXT NOT NULL,
                 size INTEGER)''')
-                
+    conn.close()
+    conn1 = get_db_connection_for_user_password()
+
+    # Create a cursor object to execute SQL queries
+    cursor1 = conn.cursor()
+    cursor1.execute('''CREATE TABLE IF NOT EXISTS users
+                  (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                  username TEXT(200) NOT NULL, 
+                  password TEXT NOT NULL,
+                  email TEXT NOT NULL,
+                  full_name TEXT NOT NULL,
+                  phone_num TEXT NOT NULL,
+                  path_img_profile TEXT NOT NULL)''')
+    conn1.close()
     app.run(debug = True)
