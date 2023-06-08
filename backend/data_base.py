@@ -140,6 +140,37 @@ def login():
         return jsonify({'message': "Login failed"}), 400
 
 
+@app.route('/api/get_data', methods=['POST'])
+def get_data_about_user():
+    data = request.json
+    username = data.get('username')
+
+    if(valid_user_or_password(username,'a'*min_password_len) == False):
+        illegal_input_err()
+
+    conn = get_db_connection_for_user_password()
+    # Create a cursor object to execute SQL queries
+    cursor = conn.cursor()
+
+    # Execute the SELECT query to retrieve the user by username
+    cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+
+    # Fetch the first row (user) from the result set
+    user = cursor.fetchone()
+
+    # Close the connection
+    conn.close()
+
+    if user is not None:
+        email = user[3]
+        
+        return jsonify({'message': f"Email is: {email}"}), 200
+
+        
+    else:
+        return jsonify({'message': "invalid"}), 400
+
+
 if __name__ == '__main__':
     app.run()
 
