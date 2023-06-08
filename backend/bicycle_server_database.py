@@ -397,7 +397,7 @@ if __name__ == '__main__':
     conn1 = get_db_connection_for_user_password()
 
     # Create a cursor object to execute SQL queries
-    cursor1 = conn.cursor()
+    cursor1 = conn1.cursor()
     cursor1.execute('''CREATE TABLE IF NOT EXISTS users
                   (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                   username TEXT(200) NOT NULL, 
