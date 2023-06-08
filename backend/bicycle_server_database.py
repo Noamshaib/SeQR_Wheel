@@ -5,8 +5,11 @@ import qrcode
 from io import BytesIO
 import re
 from flask import Flask, request, jsonify, send_file
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
 database_bicycle = 'bicycle.db'
 database_user_password = 'users_pass_email.db'
 
@@ -392,6 +395,21 @@ def get_vehicle_by_serial_num():#TODO:
     return jsonify({'message':'The vehicle belongs to no one'}),400
 
 #def set_vehicle_id():
+@app.route('/api/get_user_vehicles', methods=['POST'])
+def get_user_vehicles():
+    data = request.json
+    username = data.get('username')
+    conn = get_db_connection_for_bicycle()
+    # Create a cursor object to execute SQL queries
+    cursor = conn.cursor()
+
+    # Execute the SELECT query to retrieve the user by username
+    cursor.execute("SELECT * FROM bicycle WHERE owner = ?", (username,))
+
+    # Fetch the first row (user) from the result set
+    bicycles = cursor.fetchone()
+    return jsonify(bicycles or []), 200
+
 
 if __name__ == '__main__':
     conn = get_db_connection_for_bicycle()
@@ -410,4 +428,4 @@ if __name__ == '__main__':
                 contact_info TEXT NOT NULL,
                 size INTEGER)''')
                 
-    app.run()
+    app.run(debug=True)
