@@ -131,13 +131,13 @@ def login():
         user_id, username, hashed_password, email = user
         try_hash_password = hashlib.sha256(password.encode()).hexdigest()
         if try_hash_password == hashed_password:
-            return jsonify({'message': "wow"}), 200
+            return jsonify({'message': "Login success"}), 200
         else:
-            return jsonify({'message': "Doesn't exist"}), 400
+            return jsonify({'message': "Login failed"}), 400
 
         
     else:
-        return jsonify({'message': "Doesn't exist"}), 400
+        return jsonify({'message': "Login failed"}), 400
 
 
 if __name__ == '__main__':
