@@ -331,29 +331,28 @@ def search_serial_num(serial_num):
 # Example route to create a new user
 @app.route('/api/sign_up', methods=['POST'])#TODO: change the url to the relevant one.
 def create_vehicle():
-    #add another database saperated from user - password to the all other data
-
     data = request.json
     vehicle_type      = data.get('type')
-    #bicycle_system_id = data.get('bicycle_id') #our own id, not the one written on the bike
     serial_num        = data.get('serial_num')
     #qr_code           = data.get('qr_code')
-    photos            = data.get('photos')
+    #photos            = data.get('photos')
     owner             = data.get('owner')
     color             = data.get('color')
     size              = data.get('size')
     stolen            = False
     contact_info      = data.get('contact_info')
+    image_file = request.files.get('image')
 
-
-    #TODO: GENERATE A QR code & bicycle_id
+    #TODO: GENERATE A QR code 
     if search_serial_num(serial_num) != None:
         return jsonify({'message': 'serial number exist'}), 400
-    #bicycle_system_id = set_vehicle_id()
+
     #TODO - fix it so it will generate QR code
     #qr_code = set_qr_code(serial_num)
     qr_code = "111"
-    
+    if not photos:
+        photos = sqlite3.Binary('')  # Empty blob value
+
     # Create a new user
     conn = get_db_connection_for_bicycle()
     cursor = conn.cursor()
@@ -395,21 +394,6 @@ def get_vehicle_by_serial_num():#TODO:
     return jsonify({'message':'The vehicle belongs to no one'}),400
 
 #def set_vehicle_id():
-@app.route('/api/get_user_vehicles', methods=['POST'])
-def get_user_vehicles():
-    data = request.json
-    username = data.get('username')
-    conn = get_db_connection_for_bicycle()
-    # Create a cursor object to execute SQL queries
-    cursor = conn.cursor()
-
-    # Execute the SELECT query to retrieve the user by username
-    cursor.execute("SELECT * FROM bicycle WHERE owner = ?", (username,))
-
-    # Fetch the first row (user) from the result set
-    bicycles = cursor.fetchone()
-    return jsonify(bicycles or []), 200
-
 
 if __name__ == '__main__':
     conn = get_db_connection_for_bicycle()
