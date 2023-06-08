@@ -231,10 +231,11 @@ def get_data_about_user():
     conn.close()
 
     if user is not None:
-        email = user[3]
-        
-        return jsonify({'message': f"Email is: {email}"}), 200
-
+        # Remove the 'password' column from the row
+        user = dict(zip(cursor.description, user))
+        del user['password']
+        # Return the modified row as JSON response
+        return jsonify(user), 200
         
     else:
         return jsonify({'message': "invalid"}), 400
