@@ -363,7 +363,7 @@ def create_vehicle():
                                                  color,\
                                                  stolen,\
                                                  contact_info,\
-                                                 size) VALUES ?", (vehicle_type, serial_num, qr_code, photos, owner, color, stolen, contact_info, size))
+                                                 size) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (vehicle_type, serial_num, qr_code, photos, owner, color, stolen, contact_info, size))
                                                  
     conn.commit()
     conn.close()

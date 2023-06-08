@@ -12,11 +12,18 @@ import AppContext from './AppContext';
 const Stack = createStackNavigator();
 
 export default function App() {
+  const [username, setUsername] = React.useState('')
+  const [password, setPassword] = React.useState('')
   return (
-    <AppContext.Provider value={{username: '', password: ''}} >
+    <AppContext.Provider value={{username, password, setUsername, setPassword}} >
       <NavigationContainer>
         <Stack.Navigator>
 
+          <Stack.Screen
+            name="Register"
+            component={RegisterPage}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen
             name="BottomTabNavigator"
             component={BottomTabNavigator}
@@ -25,11 +32,6 @@ export default function App() {
           <Stack.Screen 
             name="Login"
             component={SignInPage}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Register"
-            component={RegisterPage}
             options={{ headerShown: false }}
           />
           <Stack.Screen 

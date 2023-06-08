@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, Button } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { NGROK_URL } from './constants'; 
+import AppContext from './AppContext';
 
 export default function SignInPage({ navigation }) {
   const initialValues = {
@@ -10,11 +11,12 @@ export default function SignInPage({ navigation }) {
     password: '',
   };
 
+  const context = React.useContext(AppContext)
+
   const validationSchema = Yup.object().shape({
     //username: Yup.string().username('Invalid username').required('username is required'),
     password: Yup.string().required('Password is required'),
-  });
-
+  })
   const handleSubmit = async (values) => {
     try {
       const response = await fetch(`${NGROK_URL}/api/login`, {
