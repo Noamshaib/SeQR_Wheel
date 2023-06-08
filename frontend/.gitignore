@@ -96,4 +96,8 @@ frontend//packages/**/Info-generated.plist
 frontend//ios/Pods
 frontend//ios/build
 frontend/**/ios/.xcode.env.local
+<<<<<<< HEAD
 frontend//ios/versioned-react-native/*/ReactNative/sdks/hermes-engine/destroot
+=======
+frontend//ios/versioned-react-native/*/ReactNative/sdks/hermes-engine/destroot
+>>>>>>> 3451432dddecd06beec0bb94295287107d9a9a39
