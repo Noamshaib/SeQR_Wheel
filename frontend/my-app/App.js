@@ -1,27 +1,51 @@
 import React from 'react';
+import { useContext } from 'react';
 import { View, Text, StyleSheet, Button, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import RegisterPage from './RegisterPage';
+import VehicleSearch from './VehicleSearch';
+import BottomTabNavigator from './BottomTabNavigator';
+import SignInPage from './SignInPage';
+import AppContext from './AppContext';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={HomePage}
-           options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Register"
-          component={RegisterPage}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AppContext.Provider value={{username: '', password: ''}} >
+      <NavigationContainer>
+        <Stack.Navigator>
+
+          <Stack.Screen
+            name="BottomTabNavigator"
+            component={BottomTabNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name="Login"
+            component={SignInPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Register"
+            component={RegisterPage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name="Search"
+            component={VehicleSearch}
+            options={{headerShown: false}}>
+          </Stack.Screen>
+          {/* <Stack.Screen
+            name="Home"
+            component={HomePage}
+            options={{ headerShown: false }}
+          /> */}
+
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AppContext.Provider>
   );
 }
 

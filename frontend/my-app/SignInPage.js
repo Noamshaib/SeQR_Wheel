@@ -2,29 +2,22 @@ import React from 'react';
 import { View, Text, StyleSheet, TextInput, Button } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { NGROK_URL } from './constants';
+import { NGROK_URL } from './constants'; 
 
-export default function RegisterPage({ navigation }) {
+export default function SignInPage({ navigation }) {
   const initialValues = {
     username: '',
-    full_name: '',
-    email: '',
-    phone_number: '',
     password: '',
   };
 
   const validationSchema = Yup.object().shape({
-    username: Yup.string().required('User name is required'),
-    full_name: Yup.string().required('Full name is required'),
-    email: Yup.string().email('Invalid email').required('Email is required'),
-    phone_number: Yup.string(),
+    //username: Yup.string().username('Invalid username').required('username is required'),
     password: Yup.string().required('Password is required'),
   });
 
   const handleSubmit = async (values) => {
     try {
-      console.log("NOOOO")
-      const response = await fetch(`${NGROK_URL}/api/sign_up`, {
+      const response = await fetch(`${NGROK_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,19 +26,19 @@ export default function RegisterPage({ navigation }) {
       });
   
       if (response.ok) {
-        // Registration successful
+        // Server response was successful
         const data = await response.json();
-        console.log('Registration successful:', data);
+        console.log('Sign in successful:', data);
         navigation.navigate('BottomTabNavigator');
-        // Do something with the server response, e.g., display a success message or navigate to the next screen
+        // Do something with the server response, e.g., store the user token or navigate to the next screen
       } else {
-        // Registration error
+        // Server response was not successful
         const errorData = await response.json();
-        console.log('Registration error:', errorData);
+        console.log('Sign in error:', errorData);
         // Handle the error, e.g., display an error message to the user
       }
     } catch (error) {
-      console.error('Error registering:', error);
+      console.error('Error signing in:', error);
       // Handle the error, e.g., display an error message to the user
     }
   };
@@ -53,48 +46,23 @@ export default function RegisterPage({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
+      <Text style={styles.title}>Sign in</Text>
       <Formik
         initialValues={initialValues}
-        // validationSchema={validationSchema}
+        validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
         {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
           <View style={styles.form}>
+
             <TextInput
               style={styles.input}
-              placeholder="User Name"
+              placeholder="username"
               onChangeText={handleChange('username')}
               onBlur={handleBlur('username')}
               value={values.username}
             />
             {errors.username && <Text style={styles.error}>{errors.username}</Text>}
-
-            <TextInput
-              style={styles.input}
-              placeholder="Full Name"
-              onChangeText={handleChange('full_name')}
-              onBlur={handleBlur('full_name')}
-              value={values.full_name}
-            />
-            {errors.full_name && <Text style={styles.error}>{errors.full_name}</Text>}
-
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
-              value={values.email}
-            />
-            {errors.email && <Text style={styles.error}>{errors.email}</Text>}
-
-            <TextInput
-              style={styles.input}
-              placeholder="Phone Number"
-              onChangeText={handleChange('phone_number')}
-              onBlur={handleBlur('phone_number')}
-              value={values.phone_number}
-            />
 
             <TextInput
               style={styles.input}
@@ -106,7 +74,7 @@ export default function RegisterPage({ navigation }) {
             />
             {errors.password && <Text style={styles.error}>{errors.password}</Text>}
 
-            <Button title="Register" onPress={handleSubmit} />
+            <Button title="Sign in" onPress={handleSubmit} />
           </View>
         )}
       </Formik>
