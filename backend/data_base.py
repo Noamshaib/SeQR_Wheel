@@ -77,7 +77,7 @@ def get_db_connection_for_user_password():
     return conn
 
 # Example route to create a new user
-@app.route('/api/sign_up', methods=['POST'])
+@app.route('sign_up', methods=['POST'])
 def create_user():
     #add another database saperated from user - password to the all other data
     #if there is time make the password with hash
@@ -105,7 +105,7 @@ def create_user():
     return jsonify({'message': 'User created successfully'}), 200
 
 # Example route to get all users
-@app.route('/api/login', methods=['POST'])
+@app.route('login', methods=['POST'])
 def login():
     data = request.json
     username = data.get('username')
@@ -140,7 +140,7 @@ def login():
         return jsonify({'message': "Login failed"}), 400
 
 
-@app.route('/api/get_data', methods=['POST'])
+@app.route('get_data', methods=['POST'])
 def get_data_about_user():
     data = request.json
     username = data.get('username')

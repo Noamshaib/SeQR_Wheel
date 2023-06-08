@@ -197,7 +197,8 @@ def login():
     conn.close()
 
     if user is not None:
-        user_id, username, hashed_password, email = user
+        username = user[1]
+        hashed_password = user[2]
         try_hash_password = hashlib.sha256(password.encode()).hexdigest()
         if try_hash_password == hashed_password:
             return jsonify({'message': "Login success"}), 200
@@ -213,9 +214,11 @@ def login():
 def get_data_about_user():
     data = request.json
     username = data.get('username')
+    print('valid or not')
 
     if(valid_user_or_password(username,'a'*min_password_len) == False):
         illegal_input_err()
+    print('valid or not')
 
     conn = get_db_connection_for_user_password()
     # Create a cursor object to execute SQL queries
@@ -229,15 +232,16 @@ def get_data_about_user():
 
     # Close the connection
     conn.close()
-
+    print('fucck')
     if user is not None:
         # Remove the 'password' column from the row
-        user = dict(zip(cursor.description, user))
-        del user['password']
+        
         # Return the modified row as JSON response
-        return jsonify(user), 200
+        print(user)
+        return jsonify(dict(user)), 200
         
     else:
+        print('shit')
         return jsonify({'message': "invalid"}), 400
 
 
