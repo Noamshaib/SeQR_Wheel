@@ -206,7 +206,8 @@ def get_data_about_user():
 
     # Fetch the first row (user) from the result set
     user = cursor.fetchone()
-
+    print('usernmae', username)
+    print('user', user)
     # Close the connection
     conn.close()
 
@@ -393,7 +394,29 @@ def get_vehicle_by_serial_num():#TODO:
         return jsonify({'message': f"The vheicle belongs to someone, but isn't stolen."}), 200
     return jsonify({'message':'The vehicle belongs to no one'}),400
 
-#def set_vehicle_id():
+
+@app.route('/api/get_user_vehicles', methods=['POST'])
+def get_user_vehicles():
+    print('fuck')
+    print(request.data)
+    data = request.json
+    username = data.get('username')
+    print("asdfasdfasdf")
+    conn = get_db_connection_for_bicycle()
+    # Create a cursor object to execute SQL queries
+    cursor = conn.cursor()
+
+    # Execute the SELECT query to retrieve the user by username
+    print('hi')
+    cursor.execute("SELECT * FROM bicycle WHERE owner = ?", (username,))
+
+    # Fetch the first row (user) from the result set
+    bicycles = cursor.fetchone()
+    print(bicycles)
+    print(bicycles or [])
+    return jsonify(bicycles), 200
+
+
 
 if __name__ == '__main__':
     conn = get_db_connection_for_bicycle()
