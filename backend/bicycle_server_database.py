@@ -4,14 +4,15 @@ import hashlib
 import qrcode
 from io import BytesIO
 import re
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, render_template
 from flask_cors import CORS
 import os
 from werkzeug.utils import secure_filename
 
 
-app = Flask(__name__, static_folder= "img_static")
-app.config['UPLOAD_FOLDER'] = 'img_static'
+app = Flask(__name__, static_folder= "/static")
+app.config['UPLOAD_FOLDER'] = 'static'
+app.config['STATIC_FOLDER'] = 'static'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 CORS(app)
 database_bicycle = 'bicycle.db'
@@ -326,7 +327,7 @@ def create_vehicle():
     conn = get_db_connection_for_bicycle()
     cursor = conn.cursor()
 
-    cursor.execute("INSERT INTO users (vehicle_type,\
+    cursor.execute("INSERT INTO bicycle (vehicle_type,\
                                                  serial_num,\
                                                  qr_code,\
                                                  photos,\
@@ -370,13 +371,19 @@ def get_user_vehicles():
     conn = get_db_connection_for_bicycle()
     # Create a cursor object to execute SQL queries
     cursor = conn.cursor()
-
+    
     # Execute the SELECT query to retrieve the user by username
     cursor.execute("SELECT * FROM bicycle WHERE owner = ?", (username,))
 
     # Fetch the first row (user) from the result set
-    bicycles = cursor.fetchone()
-    return jsonify(bicycles or []), 200
+    bicycles = cursor.fetchall()
+    print(list(bicycles))
+    lst = []
+    for item in bicycles:
+        lst.append(dict(item))
+        
+
+    return jsonify(lst), 200
 
 
 

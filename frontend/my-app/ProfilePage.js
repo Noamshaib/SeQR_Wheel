@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialIcons } from '@expo/vector-icons';
+
 import { Feather } from '@expo/vector-icons';
 import BottomTabNavigator from './BottomTabNavigator';
 import { NGROK_URL } from './constants';
@@ -8,7 +10,7 @@ import AppContext from './AppContext';
 
 const Tab = createBottomTabNavigator();
 
-export default function ProfilePage() {
+export default function ProfilePage({ navigation }) {
   const [user, setUser] = React.useState(null);
   const [bikeData, setBikeData] = React.useState([]);
   const context = React.useContext(AppContext)
@@ -25,18 +27,24 @@ export default function ProfilePage() {
   //
   React.useEffect(() => {
     // Fetch user data from the server
-    fetch(`${NGROK_URL}/api/user`, {
-      body: JSON.stringify(context),
-      method: 'POST'
+    fetch(`${NGROK_URL}/get_data`, {
+      body: JSON.stringify({username: context.username, password: context.password}),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
     })
       .then((response) => response.json())
       .then((data) => setUser(data))
       .catch((error) => console.error('Error fetching user data:', error));
 
     // Fetch bike data from the server
-    fetch(`${NGROK_URL}/api/get_user_vehicles`, {
-      body: JSON.stringify(context),
-      method: 'POST'
+    fetch(`${NGROK_URL}/get_user_vehicles`, {
+      body: JSON.stringify({username: context.username, password: context.password}),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
     })
       .then((response) => response.json())
       .then((data) => setBikeData(data))
@@ -72,8 +80,9 @@ export default function ProfilePage() {
 
   
   const handleReportAsStolen = async (bikeId) => {
+    console.log(bikeId)
     try {
-      const response = await fetch(`${NGROK_URL}/api/set_stole`, {
+      const response = await fetch(`${NGROK_URL}/set_stole`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,6 +96,7 @@ export default function ProfilePage() {
       } else {
         // Handle error case
         const errorData = await response.json();
+        console.log(errorData)
         // Handle the error response
       }
     } catch (error) {
@@ -99,8 +109,12 @@ export default function ProfilePage() {
     <View style={styles.bikeItem}>
       <Image source={item.image} style={styles.bikeImage} />
       <View style={styles.bikeInfo}>
-        <Text style={styles.bikeName}>{item.name}</Text>
-        <Text style={styles.bikeDetails}>{item.details}</Text>
+        <Text style={styles.bikeName}>Company: {item.company}</Text>
+        <Text style={styles.bikeDetails}>Owner: {item.owner}</Text>
+        <Text style={styles.bikeDetails}>Type: {item.type}</Text>
+        <Text style={styles.bikeDetails}>Color: {item.color}</Text>
+        <Text style={styles.bikeDetails}>Size: {item.size}</Text>
+        <Text style={styles.bikeDetails}>Serial Number: {item.serial_num}</Text>
         <TouchableOpacity style={styles.reportButton} onPress={() => handleReportAsStolen(item.serial_num)}>
           <Text style={styles.reportButtonText}>Report as Stolen</Text>
         </TouchableOpacity>
@@ -117,6 +131,10 @@ export default function ProfilePage() {
     );
   }
 
+  const handleAddBike = () => {
+    navigation.navigate('AddBike');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
@@ -132,9 +150,13 @@ export default function ProfilePage() {
       <FlatList
         data={bikeData}
         renderItem={renderBikeItem}
-        keyExtractor={(item) => item.id}
+        // keyExtractor={(item) => item.}
         contentContainerStyle={styles.bikeListContainer}
       />
+      <TouchableOpacity style={styles.circleButton} onPress={handleAddBike}>
+        <MaterialIcons name="pedal-bike" size={32} color="white" />
+      </TouchableOpacity>
+
     </View>
   );
 }

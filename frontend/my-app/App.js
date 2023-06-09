@@ -8,6 +8,7 @@ import VehicleSearch from './VehicleSearch';
 import BottomTabNavigator from './BottomTabNavigator';
 import SignInPage from './SignInPage';
 import AppContext from './AppContext';
+import AddBike from './AddBike';
 
 const Stack = createStackNavigator();
 
@@ -18,10 +19,9 @@ export default function App() {
     <AppContext.Provider value={{username, password, setUsername, setPassword}} >
       <NavigationContainer>
         <Stack.Navigator>
-
-          <Stack.Screen
-            name="Register"
-            component={RegisterPage}
+          <Stack.Screen 
+            name="Login"
+            component={SignInPage}
             options={{ headerShown: false }}
           />
           <Stack.Screen
@@ -29,16 +29,24 @@ export default function App() {
             component={BottomTabNavigator}
             options={{ headerShown: false }}
           />
-          <Stack.Screen 
-            name="Login"
-            component={SignInPage}
+          <Stack.Screen
+            name="Register"
+            component={RegisterPage}
             options={{ headerShown: false }}
           />
+
+
           <Stack.Screen 
             name="Search"
             component={VehicleSearch}
             options={{headerShown: false}}>
           </Stack.Screen>
+
+          <Stack.Screen
+            name="AddBike"
+            component={AddBike}
+            options={{ headerShown: false }}
+          />
           {/* <Stack.Screen
             name="Home"
             component={HomePage}

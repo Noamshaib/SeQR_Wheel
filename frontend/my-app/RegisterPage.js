@@ -9,7 +9,7 @@ export default function RegisterPage({ navigation }) {
     username: '',
     full_name: '',
     email: '',
-    phone_number: '',
+    phone_num: '',
     password: '',
   };
 
@@ -17,14 +17,14 @@ export default function RegisterPage({ navigation }) {
     username: Yup.string().required('User name is required'),
     full_name: Yup.string().required('Full name is required'),
     email: Yup.string().email('Invalid email').required('Email is required'),
-    phone_number: Yup.string(),
+    phone_num: Yup.string(),
     password: Yup.string().required('Password is required'),
   });
 
   const handleSubmit = async (values) => {
     try {
       console.log("NOOOO")
-      const response = await fetch(`${NGROK_URL}/api/sign_up`, {
+      const response = await fetch(`${NGROK_URL}/sign_up`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,9 +91,9 @@ export default function RegisterPage({ navigation }) {
             <TextInput
               style={styles.input}
               placeholder="Phone Number"
-              onChangeText={handleChange('phone_number')}
-              onBlur={handleBlur('phone_number')}
-              value={values.phone_number}
+              onChangeText={handleChange('phone_num')}
+              onBlur={handleBlur('phone_num')}
+              value={values.phone_num}
             />
 
             <TextInput

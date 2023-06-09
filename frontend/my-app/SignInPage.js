@@ -19,7 +19,7 @@ export default function SignInPage({ navigation }) {
   })
   const handleSubmit = async (values) => {
     try {
-      const response = await fetch(`${NGROK_URL}/api/login`, {
+      const response = await fetch(`${NGROK_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,6 +32,10 @@ export default function SignInPage({ navigation }) {
         const data = await response.json();
         console.log('Sign in successful:', data);
         navigation.navigate('BottomTabNavigator');
+        console.log(values)
+        context.setUsername(values.username)
+        context.setPassword(values.password)
+        // context.setUsername(data.username)
         // Do something with the server response, e.g., store the user token or navigate to the next screen
       } else {
         // Server response was not successful

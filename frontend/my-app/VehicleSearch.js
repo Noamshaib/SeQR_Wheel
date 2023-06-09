@@ -34,7 +34,10 @@ export default function VehicleSearch() {
     const queryString = queryParams.join('&');
   
     // Make the API request
-    fetch(`${NGROK_URL}?${queryString}`)
+    fetch(`${NGROK_URL}/search_vehicles`, {
+      method: 'POST',
+
+    })
       .then((response) => response.json())
       .then((data) => {
         setSearchResults(data); // Assuming the API response is an array of search results
@@ -51,9 +54,8 @@ export default function VehicleSearch() {
       <Image source={item.image} style={styles.bikeImage} />
       <View style={styles.bikeDetails}>
         <Text style={styles.bikeName}>{item.name}</Text>
-        <Text>{`Company: ${item.company}`}</Text>
         <Text>{`Color: ${item.color}`}</Text>
-        <Text>{`Type: ${item.type}`}</Text>
+        <Text>{`Type: ${item.vehicle_type}`}</Text>
       </View>
     </View>
   );
